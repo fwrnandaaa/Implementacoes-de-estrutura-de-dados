@@ -1,2 +1,2 @@
-# EDL
-Implementações realizadas na disciplina de estrutura de dados lineares.
+
+# Implementações realizadas nas disciplinas de estrutura de dados lineares e estrutura de dados não lineares.
