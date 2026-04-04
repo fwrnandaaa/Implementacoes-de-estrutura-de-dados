@@ -1,11 +1,12 @@
 
 import java.util.ArrayList;
 import java.util.List;
+package EDL.Arvore;
 
 public class ArvoreBinaria {
 
-    Node root;
-    int size;
+    protected Node root;
+    protected int size;
 
     public ArvoreBinaria() {
         root = null;
@@ -162,7 +163,6 @@ public class ArvoreBinaria {
             size++;
             return;
         }
-
         Node aux = busca(root, O.value);
         if (aux.value == O.value) {
             throw new ArvoreBinexcecao("A chave informada já existe na árvore.");
