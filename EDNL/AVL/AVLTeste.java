@@ -11,6 +11,21 @@ public class AVLTeste{
     arvore.insert(aux1);
     arvore.insert(aux2);
     arvore.insert(aux3);
+    System.out.println("Teste rotação esquerda");
+    arvore.mostrar();
+    System.out.println("Teste rotação direita");
+    AVL.Node aux4 = new AVL.Node(5);
+    AVL.Node aux5 = new AVL.Node(3);
+    arvore.insert(aux4);
+    arvore.insert(aux5);
+    arvore.mostrar();
+    System.out.println("Teste rotação dupla direita");
+    AVL.Node aux6 = new AVL.Node(4);
+    arvore.insert(aux6);
+    arvore.mostrar();
+    System.out.println("Teste rotação dupla esquerda");
+    AVL.Node aux7 = new AVL.Node(7);
+    arvore.insert(aux7);
     arvore.mostrar();
     }
 }

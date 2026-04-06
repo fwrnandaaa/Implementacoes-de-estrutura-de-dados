@@ -210,9 +210,9 @@ public class ArvoreBinaria {
             if (O == O.parent.left) {
                 O.parent.left = O.right;
             } else {
-                O.parent.right = O.parent;
+                O.parent.right = O.right;
             }
-            O.right.parent = O.right;
+            O.right.parent = O.parent;
             size--;
             return;
         }

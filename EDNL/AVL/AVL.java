@@ -24,8 +24,8 @@ public class AVL extends ArvoreBinaria {
         }
         current.left = O;
         O.parent = current;
-        int novo_fb_current = (current.fb + 1) - Math.max(O.fb, 0); 
-        int novo_fb_O = (O.fb + 1) + Math.max(novo_fb_current, 0);
+        int novo_fb_O = (O.fb + 1) - Math.min(current.fb, 0);
+        int novo_fb_current = (current.fb +1) + Math.max(novo_fb_O, 0);
         current.fb = novo_fb_current;
         O.fb = novo_fb_O;
        }
@@ -45,8 +45,8 @@ public class AVL extends ArvoreBinaria {
         }
         current.right = O;
         O.parent = current;
-        int novo_fb_current = (current.fb - 1) - Math.max(O.fb, 0);
-        int novo_fb_O= (O.fb - 1) + Math.min(current.fb, 0);
+        int novo_fb_O       = (O.fb - 1) - Math.max(current.fb, 0);
+        int novo_fb_current = (current.fb - 1) + Math.min(novo_fb_O, 0);
         current.fb = novo_fb_current;
         O.fb = novo_fb_O;
        }
@@ -105,7 +105,7 @@ public class AVL extends ArvoreBinaria {
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < (int) Math.pow(2, h); j++) {
                 if (matriz[i][j] != 0) {
-                    System.out.print(matriz[i][j] + "[" + fbs[i][j] + "]");
+                    System.out.print(matriz[i][j] + "[" + fbs[i][j] + "]" + " ");
                 } else {
                     System.out.print("  ");
                 }
