@@ -2,19 +2,25 @@ package EDNL.AVL;
 import EDL.Arvore.ArvoreBinaria;
 
 public class AVL extends ArvoreBinaria {
-    int fb;
-    public Node(int O){
-        super(O);
-        this.fb = 0;
+    public static class Node extends ArvoreBinaria.Node {
+        int fb;
+        public Node(int O){
+            super(O);
+            this.fb = 0;
+        }
     }
     public void rotacaoEsquerda(Node O){
-        Node current = O.right;
-        current.parent = O.parent;
+        Node current = (Node) O.right;
+        current.parent =  O.parent;
         if (root == O){
             root = current;
         }
         else{
             O.parent.right = current;
+        }
+        O.right = current.left; 
+        if(current.left != null){
+            current.left.parent = O; 
         }
         current.left = O;
         O.parent = current;
@@ -23,13 +29,17 @@ public class AVL extends ArvoreBinaria {
        }
     
     public void rotacaoDireita(Node O){
-        Node current = O.left;
+        Node current = (Node) O.left;
         current.parent = O.parent;
         if (root == O){
             root = current;
         }
         else{
             O.parent.left = current;
+        }
+        O.left = current.right;
+    if(current.right != null){
+        current.right.parent = O;
         }
         current.right = O;
         O.parent = current;
@@ -38,40 +48,77 @@ public class AVL extends ArvoreBinaria {
        }
     
     public void duplaEsquerda(Node O){
-      rotacaoDireita(O.right);
+      rotacaoDireita((Node) O.right);
       rotacaoEsquerda(O);
     }
     public void duplaDireita(Node O){
-       rotacaoEsquerda(O.left);
+       rotacaoEsquerda((Node) O.left);
        rotacaoDireita(O);
     }
     public void rebalancear(Node O){
-       if(O.fb >= -1 && O.fb <= 1){
-        return;
-       }
        if(O.fb == 2){
-        if(O.right.fb <= 0){
-            rotacaoEsquerda(O);
-        }
-        if(O.right.fb > 0){
-            duplaEsquerda(O);
-        }
-       }
-       if(O.fb == -2){
-        if(O.left.fb >= 0){
+        if(((Node) O.left).fb >= 0){
             rotacaoDireita(O);
         }
-        if(O.left.fb < 0){
+        else if(((Node) O.left).fb < 0){
             duplaDireita(O);
         }
        }
+       if(O.fb == -2){
+        if(((Node) O.right).fb<= 0){
+            rotacaoEsquerda(O);
+        }
+        else if(((Node) O.right).fb > 0){
+            duplaEsquerda(O);
+        }
+       }
     }
-    @Override
+
     public void insert(Node O){
-        return;
+        super.insert(O);
+        Node current = (Node) O.parent;
+        while (current != null) {
+            if(O == current.left){
+                    current.fb += 1;
+                }
+            else{
+                    current.fb += -1;
+                    
+                }
+            if(current.fb == 2 || current.fb == -2){
+                rebalancear(current);
+                break;
+            }
+            O = current;
+            current = (Node) current.parent;
+        }
     }
-    @Override
-    public void remove(Node O){
-        return;
+    public void mostrar() {
+        int h = height(root) + 1;
+        int[][] matriz = new int[h][(int) Math.pow(2, h)];
+        int[][] fbs = new int[h][(int) Math.pow(2, h)];
+        preencheMatriz(root, matriz, fbs, 0, 0, (int) Math.pow(2, h) / 2);
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < (int) Math.pow(2, h); j++) {
+                if (matriz[i][j] != 0) {
+                    System.out.print(matriz[i][j] + "[" + fbs[i][j] + "]");
+                } else {
+                    System.out.print("  ");
+                }
+            }
+            System.out.println();
+        }
     }
-}
+
+    private void preencheMatriz(ArvoreBinaria.Node O, int[][] matriz, int[][] fbs, int nivel, int esq, int dir) {
+        if (O == null) return;
+        int meio = (esq + dir) / 2;
+        matriz[nivel][meio] = O.value;
+        fbs[nivel][meio] = ((Node) O).fb;
+        preencheMatriz(O.left, matriz, fbs, nivel + 1, esq, meio);
+        preencheMatriz(O.right, matriz, fbs, nivel + 1, meio, dir);
+    }
+        public void remove(Node O){
+            return;
+        }
+    }

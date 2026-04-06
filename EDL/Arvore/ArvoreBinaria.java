@@ -1,12 +1,13 @@
 
+package EDL.Arvore;
 import java.util.ArrayList;
 import java.util.List;
-package EDL.Arvore;
+
 
 public class ArvoreBinaria {
 
-    protected Node root;
-    protected int size;
+    public Node root;
+    public int size;
 
     public ArvoreBinaria() {
         root = null;
@@ -18,11 +19,10 @@ public class ArvoreBinaria {
     }
 
     public static class Node {
-
-        int value;
-        Node left;
-        Node right;
-        Node parent;
+        public int value;
+        public Node left;
+        public Node right;
+        public Node parent;
 
         public Node(int O) {
 
