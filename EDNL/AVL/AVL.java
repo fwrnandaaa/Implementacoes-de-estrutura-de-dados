@@ -9,11 +9,11 @@ public class AVL extends ArvoreBinaria {
             this.fb = 0;
         }
     }
-    public void rotacaoEsquerda(Node O){
-        Node current = (Node) O.right;
-        current.parent =  O.parent;
+    public void rotacaoEsquerda(Node O){ // 6
+        Node current = (Node) O.right; //8
+        current.parent =  O.parent; 
         if (root == O){
-            root = current;
+            root = current; 
         }
         else{
             O.parent.right = current;
@@ -24,8 +24,10 @@ public class AVL extends ArvoreBinaria {
         }
         current.left = O;
         O.parent = current;
-        current.fb = current.fb + 1 - Math.min(O.fb, 0);
-        O.fb = O.fb + 1 + Math.max(current.fb, 0);
+        int novo_fb_current = (current.fb + 1) - Math.max(O.fb, 0); 
+        int novo_fb_O = (O.fb + 1) + Math.max(novo_fb_current, 0);
+        current.fb = novo_fb_current;
+        O.fb = novo_fb_O;
        }
     
     public void rotacaoDireita(Node O){
@@ -43,8 +45,10 @@ public class AVL extends ArvoreBinaria {
         }
         current.right = O;
         O.parent = current;
-        current.fb = current.fb - 1 - Math.max(O.fb, 0);
-        O.fb = O.fb - 1 + Math.min(current.fb, 0);
+        int novo_fb_current = (current.fb - 1) - Math.max(O.fb, 0);
+        int novo_fb_O= (O.fb - 1) + Math.min(current.fb, 0);
+        current.fb = novo_fb_current;
+        O.fb = novo_fb_O;
        }
     
     public void duplaEsquerda(Node O){
