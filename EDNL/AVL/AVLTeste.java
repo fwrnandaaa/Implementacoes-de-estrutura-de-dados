@@ -27,5 +27,16 @@ public class AVLTeste{
     AVL.Node aux7 = new AVL.Node(7);
     arvore.insert(aux7);
     arvore.mostrar();
+    System.out.println(" Teste remoção nó folha");
+    arvore.remove(aux3);
+    arvore.mostrar();
+    System.out.println("Teste remoção nó com 1 filho");
+    arvore.remove(aux5);
+    arvore.mostrar();
+    System.out.println("Teste remoção nó com 2 filhos");
+    arvore.remove(aux4);
+    arvore.mostrar();
+
+    
     }
 }

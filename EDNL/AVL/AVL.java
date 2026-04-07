@@ -9,14 +9,18 @@ public class AVL extends ArvoreBinaria {
             this.fb = 0;
         }
     }
-    public void rotacaoEsquerda(Node O){ // 6
-        Node current = (Node) O.right; //8
+    public void rotacaoEsquerda(Node O){ 
+        Node current = (Node) O.right;
         current.parent =  O.parent; 
         if (root == O){
             root = current; 
         }
         else{
-            O.parent.right = current;
+            if(O == O.parent.left){
+                O.parent.left = current;
+            } else {
+                O.parent.right = current;
+            }
         }
         O.right = current.left; 
         if(current.left != null){
@@ -37,7 +41,11 @@ public class AVL extends ArvoreBinaria {
             root = current;
         }
         else{
-            O.parent.left = current;
+            if(O == O.parent.left){
+                O.parent.left = current;
+            } else {
+                O.parent.right = current;
+            }
         }
         O.left = current.right;
     if(current.right != null){
@@ -97,6 +105,26 @@ public class AVL extends ArvoreBinaria {
             current = (Node) current.parent;
         }
     }
+    public void remove(Node O) {
+        Node current = (Node) O.parent;
+        super.remove(O);
+        while (current != null) {  
+            if (O == current.left) {
+                current.fb -= 1;
+            } else {
+                current.fb += 1;
+            }
+            if (current.fb == 2 || current.fb == -2) {
+                rebalancear(current);
+                break; 
+            }
+            if (current.fb != 0) {
+                break;
+            }
+            O = current;
+            current = (Node) current.parent;
+        }
+    }
     public void mostrar() {
         int h = height(root) + 1;
         int[][] matriz = new int[h][(int) Math.pow(2, h)];
@@ -105,7 +133,7 @@ public class AVL extends ArvoreBinaria {
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < (int) Math.pow(2, h); j++) {
                 if (matriz[i][j] != 0) {
-                    System.out.print(matriz[i][j] + "[" + fbs[i][j] + "]" + " ");
+                    System.out.print(matriz[i][j] + "[" + fbs[i][j] + "]" + "  ");
                 } else {
                     System.out.print("  ");
                 }
@@ -113,7 +141,6 @@ public class AVL extends ArvoreBinaria {
             System.out.println();
         }
     }
-
     private void preencheMatriz(ArvoreBinaria.Node O, int[][] matriz, int[][] fbs, int nivel, int esq, int dir) {
         if (O == null) return;
         int meio = (esq + dir) / 2;
@@ -122,7 +149,4 @@ public class AVL extends ArvoreBinaria {
         preencheMatriz(O.left, matriz, fbs, nivel + 1, esq, meio);
         preencheMatriz(O.right, matriz, fbs, nivel + 1, meio, dir);
     }
-        public void remove(Node O){
-            return;
-        }
     }

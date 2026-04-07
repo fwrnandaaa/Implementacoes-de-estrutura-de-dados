@@ -183,9 +183,6 @@ public class ArvoreBinaria {
     }
 
     public void remove(Node O) {
-        if (isRoot(O)) {
-            throw new ArvoreBinexcecao("O nó root não pode ser removido");
-        }
         if (isExternal(O)) {
 
             if (O.value > O.parent.value) {
