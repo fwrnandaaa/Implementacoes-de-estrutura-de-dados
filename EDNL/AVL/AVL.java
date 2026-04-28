@@ -149,4 +149,5 @@ public class AVL extends ArvoreBinaria {
         preencheMatriz(O.left, matriz, fbs, nivel + 1, esq, meio);
         preencheMatriz(O.right, matriz, fbs, nivel + 1, meio, dir);
     }
+    
     }

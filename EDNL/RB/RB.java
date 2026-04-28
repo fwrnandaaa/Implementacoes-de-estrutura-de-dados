@@ -61,18 +61,12 @@ public class RB {
         return false;
     }
 
-    public Integer leftChild(Node O) {
-        if (O.left == null) {
-            throw new RBExcecao("O nó informado não possui filho esquerdo.");
-        }
-        return O.left.value;
+    public Node leftChild(Node O) {
+        return O.left;
     }
 
-    public Integer rightChild(Node O) {
-        if (O.right == null) {
-            throw new RBExcecao("O nó informado não possui filho direito.");
-        }
-        return O.right.value;
+    public Node rightChild(Node O) {
+        return O.right;
     }
 
     public int depth(Node O) {
@@ -298,7 +292,7 @@ public class RB {
         current.right = O;
         O.parent = current;
     }
-    public private Node irmao(Node O){
+    public Node irmao(Node O){
         if(rightChild(O.parent) == O){
             return O.parent.left;
         }
@@ -307,47 +301,152 @@ public class RB {
         }
     }
     public void recolorirRemover(Node removido, Node substituto) {
-        if (removido != null) {
-        //caso 1
-        if (removido.color.equals("V") && substituto.color.equals("V")) {
-        return;
-         }
-        //caso 2: removido é negro e substituto é vermelho
-        if(removido.color.equals("P") && substituto.color.equals("V")){
-            substituto.color = "P";
-            return;
+        // caso 1: removido rubro e substituto rubro (ou folha)
+        if (removido != null && substituto != null) {
+            if (removido.color.equals("V") && substituto.color.equals("V")) {
+                return;
+            }
+            // caso 2: removido negro e substituto rubro
+            if (removido.color.equals("P") && substituto.color.equals("V")) {
+                substituto.color = "P";
+                return;
+            }
         }
+
+        // situação 4: removido rubro e substituto negro — pinta substituto de rubro e trata como situação 3
+        if (removido != null && substituto != null) {
+            if (removido.color.equals("V") && substituto.color.equals("P")) {
+                substituto.color = "V";
+            }
         }
-        //caso 3: removido é negro e substituto é negro
-        if(removido == null ||removido.color.equals("P") && substituto.color.equals("P")){
-            //caso 3a: substituto negro, substituto.parent negro e irmao rubro
-            irmao = irmao(substituto);
-            if(!substituto.parent.color.equals("V") && irmao.color.equals("V")){
+
+        // caso 3: removido negro e substituto negro (ou substituto null = folha)
+        if (substituto == null || (removido != null && removido.color.equals("P") && substituto.color.equals("P")) || (removido == null)) {
+            
+            if (substituto == null || substituto.parent == null) return;
+            
+            Node irmao = irmao(substituto);
+            if (irmao == null) return;
+
+            // caso 3a: pai negro e irmão rubro
+            if (!substituto.parent.color.equals("V") && irmao.color.equals("V")) {
                 substituto.color = "2P";
                 rotacaoEsquerda(substituto.parent);
                 irmao.color = "P";
                 substituto.parent.color = "V";
                 recolorirRemover(null, substituto);
+                return;
             }
 
-        
+            // caso 2a: irmão negro, filhos negros, pai negro
+            if (irmao.color.equals("P") 
+                && (leftChild(irmao) == null || leftChild(irmao).color.equals("P")) 
+                && (rightChild(irmao) == null || rightChild(irmao).color.equals("P")) 
+                && substituto.parent.color.equals("P")) {
+                irmao.color = "V";
+                duploNegro(substituto);
+                recolorirRemover(null, substituto.parent);
+                return;
+            }
+
+            // caso 2b: irmão negro, filhos negros, pai rubro
+            if (irmao.color.equals("P") 
+                && (leftChild(irmao) == null || leftChild(irmao).color.equals("P")) 
+                && (rightChild(irmao) == null || rightChild(irmao).color.equals("P")) 
+                && substituto.parent.color.equals("V")) {
+                irmao.color = "V";
+                substituto.parent.color = "P";
+                return;
+            }
+
+            // caso 3c: irmão negro, filho esquerdo rubro, filho direito negro
+            if (irmao.color.equals("P") 
+                && (leftChild(irmao) != null && leftChild(irmao).color.equals("V"))
+                && (rightChild(irmao) == null || rightChild(irmao).color.equals("P"))) {
+                Node sobrinho = leftChild(irmao);
+                rotacaoDireita(irmao);
+                irmao.color = "V";
+                sobrinho.color = "P";
+                irmao = sobrinho;
+                // cai no caso 4
+            }
+
+            // caso 4: irmão negro, filho direito rubro
+            if (irmao.color.equals("P")
+                && (rightChild(irmao) != null && rightChild(irmao).color.equals("V"))) {
+                String corPai = substituto.parent.color;
+                rotacaoEsquerda(substituto.parent);
+                substituto.parent.color = "P";
+                irmao.color = corPai;
+                rightChild(irmao).color = "P";
+            }
         }
     }
 
-    private void removeDuploNegro(Node O){
-        if(O == root){
+    private void duploNegro(Node O) {
+        if (O == root) {
             O.color = "P";
+        } else {
+            O.parent.color = "2P";
         }
     }
 
     public void remove(Node O) {
-        if(isExternal(O)){
-            if(O.value > O.parent.value){
-                O.parent.right = null
+        // caso dois filhos: pega sucessor e remove ele no lugar
+        if (hasLeft(O) && hasRight(O)) {
+            Node suc = sucessor(O);
+            recolorirRemover(O, suc);
+            O.value = suc.value;
+            if (suc.parent.right == suc) {
+                suc.parent.right = suc.right;
+            } else {
+                suc.parent.left = suc.right;
             }
-            else{
-                O.parent.left = null
+            if (suc.right != null) suc.right.parent = suc.parent;
+            size--;
+            return;
+        }
+
+        // caso folha
+        if (isExternal(O)) {
+            recolorirRemover(O, null);
+            if (O.parent != null) {
+                if (O.value > O.parent.value) {
+                    O.parent.right = null;
+                } else {
+                    O.parent.left = null;
+                }
+            } else {
+                root = null;
             }
+            size--;
+            return;
+        }
+
+        // caso só filho esquerdo
+        if (hasLeft(O) && !hasRight(O)) {
+            recolorirRemover(O, O.left);
+            if (O == O.parent.left) {
+                O.parent.left = O.left;
+            } else {
+                O.parent.right = O.left;
+            }
+            O.left.parent = O.parent;
+            size--;
+            return;
+        }
+
+        // caso só filho direito
+        if (hasRight(O) && !hasLeft(O)) {
+            recolorirRemover(O, O.right);
+            if (O == O.parent.left) {
+                O.parent.left = O.right;
+            } else {
+                O.parent.right = O.right;
+            }
+            O.right.parent = O.parent;
+            size--;
+            return;
         }
     }
 
@@ -357,6 +456,31 @@ public class RB {
             current = current.left;
         }
         return current;
+    }
+    public void mostrar() {
+        int h = height(root) + 1;
+        int[][] matriz = new int[h][(int) Math.pow(2, h)];
+        String[][] cores = new String[h][(int) Math.pow(2, h)];
+        preencheMatriz(root, matriz, cores, 0, 0, (int) Math.pow(2, h) / 2);
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < (int) Math.pow(2, h); j++) {
+                if (matriz[i][j] != 0) {
+                    System.out.print(matriz[i][j] + "[" + cores[i][j] + "]" + "  ");
+                } else {
+                    System.out.print("  ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    private void preencheMatriz(Node O, int[][] matriz, String[][] cores, int nivel, int esq, int dir) {
+        if (O == null) return;
+        int meio = (esq + dir) / 2;
+        matriz[nivel][meio] = O.value;
+        cores[nivel][meio] = O.color;
+        preencheMatriz(O.left, matriz, cores, nivel + 1, esq, meio);
+        preencheMatriz(O.right, matriz, cores, nivel + 1, meio, dir);
     }
 
 }
