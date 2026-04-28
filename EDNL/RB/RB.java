@@ -298,19 +298,59 @@ public class RB {
         current.right = O;
         O.parent = current;
     }
+    public private Node irmao(Node O){
+        if(rightChild(O.parent) == O){
+            return O.parent.left;
+        }
+        else{
+            return O.parent.right;
+        }
+    }
+    public void recolorirRemover(Node removido, Node substituto) {
+        if (removido != null) {
+        //caso 1
+        if (removido.color.equals("V") && substituto.color.equals("V")) {
+        return;
+         }
+        //caso 2: removido é negro e substituto é vermelho
+        if(removido.color.equals("P") && substituto.color.equals("V")){
+            substituto.color = "P";
+            return;
+        }
+        }
+        //caso 3: removido é negro e substituto é negro
+        if(removido == null ||removido.color.equals("P") && substituto.color.equals("P")){
+            //caso 3a: substituto negro, substituto.parent negro e irmao rubro
+            irmao = irmao(substituto);
+            if(!substituto.parent.color.equals("V") && irmao.color.equals("V")){
+                substituto.color = "2P";
+                rotacaoEsquerda(substituto.parent);
+                irmao.color = "P";
+                substituto.parent.color = "V";
+                recolorirRemover(null, substituto);
+            }
 
-    public void recolorirRemover(Node O) {
+        
+        }
+    }
+
+    private void removeDuploNegro(Node O){
+        if(O == root){
+            O.color = "P";
+        }
     }
 
     public void remove(Node O) {
-        if(hasLeft(O) && hasRight(O)){
-            Node sucessor = sucessor(O);
-            O.value = sucessor.value;
-            O = sucessor;
-
+        if(isExternal(O)){
+            if(O.value > O.parent.value){
+                O.parent.right = null
+            }
+            else{
+                O.parent.left = null
+            }
         }
-
     }
+
     public Node sucessor(Node O){
         Node current = O.right;
         while(current.left != null){
