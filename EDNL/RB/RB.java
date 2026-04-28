@@ -1,3 +1,5 @@
+import java.util.List;
+import java.util.ArrayList;
 public class RB {
     public Node root;
     public int size;
@@ -170,7 +172,7 @@ public class RB {
         recolorirInserir(O);
     }
 
-    public Node uncle(Node O) {// vou passar o no inserido
+    public Node uncle(Node O) {
         if(O.parent == null || O.parent.parent == null){
             return null;
         }
@@ -239,10 +241,6 @@ public class RB {
         O.value = n;
     }
 
-    public void remove(Node O) {
-
-    }
-
     public void elements(Node O) {
         if (O == null) {
             return;
@@ -299,6 +297,26 @@ public class RB {
         }
         current.right = O;
         O.parent = current;
+    }
+
+    public void recolorirRemover(Node O) {
+    }
+
+    public void remove(Node O) {
+        if(hasLeft(O) && hasRight(O)){
+            Node sucessor = sucessor(O);
+            O.value = sucessor.value;
+            O = sucessor;
+
+        }
+
+    }
+    public Node sucessor(Node O){
+        Node current = O.right;
+        while(current.left != null){
+            current = current.left;
+        }
+        return current;
     }
 
 }

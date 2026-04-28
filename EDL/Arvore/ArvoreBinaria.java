@@ -184,7 +184,6 @@ public class ArvoreBinaria {
 
     public void remove(Node O) {
         if (isExternal(O)) {
-
             if (O.value > O.parent.value) {
                 O.parent.right = null;
             } else {
